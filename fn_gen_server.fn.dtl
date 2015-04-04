@@ -1,0 +1,109 @@
+@behaviour(gen_server)
+
+@record(state) -> (count = 0,)
+
+fn start_link @public
+  @doc("Start a {{name}}'s instance with start_link")
+  case Opts:
+    gen_server.start_link(#i module, Opts, [])
+end
+
+fn stop @public
+  @doc("Start a {{name}}'s instance from the reference returned by start_link")
+  case Ref:
+    gen_server.call(Ref, stop)
+end
+
+fn increment @public
+  @doc("Increment counter by one")
+  @spec(pid()) -> (ok, integer())
+  case Ref:
+    increment(Ref, 1)
+end
+
+fn increment @public
+  @doc("Increment counter by provided increment value")
+  @spec(pid(), integer()) -> (ok, integer())
+  case Ref, Increment:
+    gen_server.call(Ref, (increment, Increment))
+end
+
+fn get_count @public
+  @doc("Get current counter value")
+  @spec(pid()) -> (ok, integer())
+  case Ref:
+    gen_server.call(Ref, (get, count))
+end
+
+
+
+
+fn init @public
+  @doc("gen_server callback to initialize {{name}}'s state")
+
+  case Opts:
+    log("init", Opts)
+    (ok, #r.state {count: 0})
+end
+
+
+fn handle_call @public
+  @doc("gen_server callback to handle {{name}}'s calls")
+
+  case stop, From, State:
+    log("stopping by ~p, state was ~p.", [From, State])
+    (stop, normal, stopped, State)
+
+  case (increment, Increment), _From, State = #r.state {count: Count}:
+    NewCount = Count + Increment
+    NewState = #r.state State#{count: NewCount}
+    (reply, (ok, NewCount), NewState)
+
+  case (get, count), _From, State = #r.state {count: Count}:
+    (reply, (ok, Count), State)
+end
+
+
+fn handle_cast @public
+  @doc("gen_server callback to handle {{name}}'s casts")
+
+  case Msg, State:
+    log("Unknown cast ~p, ~p.", [Msg, State])
+    (noreply, State)
+end
+
+
+fn handle_info @public
+  @doc("gen_server callback to handle {{name}}'s info calls")
+  case Info, State:
+    log("info ~p, ~p.", [Info, State])
+    (noreply, State)
+end
+
+
+fn terminate @public
+  @doc("gen_server callback to handle {{name}}'s terminate call")
+
+  case Reason, State:
+    log("terminate ~p, ~p", [Reason, State])
+    ok
+end
+
+
+fn code_change @public
+  @doc("gen_server callback to handle {{name}}'s code_change call")
+  case OldVsn, State, Extra:
+    log("code_change ~p, ~p, ~p", [OldVsn, State, Extra])
+    (ok, State)
+end
+
+
+
+
+fn log
+  @doc("logging function, change this for your preferred logging library")
+
+  case Format, Data:
+    io.format("~p:~p: ~s~n", [#i module, self(), io_lib.format(Format, Data)])
+end
+

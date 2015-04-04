@@ -1,0 +1,6 @@
+{description, "Efene gen_server module"}.
+{variables, [
+    {name, "mygenserver", "Name of the module"}
+]}.
+{template, "fn_gen_server.fn.dtl", "src/{{name}}.fn"}.
+{template, "fn_gen_server_ct.fn.dtl", "test/{{name}}_SUITE.fn"}.
