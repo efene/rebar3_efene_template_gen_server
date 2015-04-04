@@ -35,8 +35,7 @@ fn get_count @public
     gen_server.call(Ref, (get, count))
 end
 
-
-
+#_ "gen_server callbacks"
 
 fn init @public
   @doc("gen_server callback to initialize {{name}}'s state")
@@ -97,8 +96,7 @@ fn code_change @public
     (ok, State)
 end
 
-
-
+#_ "private functions"
 
 fn log
   @doc("logging function, change this for your preferred logging library")
