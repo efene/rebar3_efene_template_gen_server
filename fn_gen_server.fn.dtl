@@ -9,7 +9,7 @@ fn start_link @public
 end
 
 fn stop @public
-  @doc("Start a {{name}}'s instance from the reference returned by start_link")
+  @doc("Stop a {{name}}'s instance from the reference returned by start_link")
   case Ref:
     gen_server.call(Ref, stop)
 end
