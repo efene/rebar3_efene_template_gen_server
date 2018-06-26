@@ -3,90 +3,90 @@
 @record(state) -> (count = 0, last_data = nil)
 
 fn start_link @public
-  @doc("Start a {{name}}'s instance with start_link")
-  case Opts:
-    gen_server.start_link(#i module, Opts, [])
+@doc("Start a {{name}}'s instance with start_link")
+case Opts:
+  gen_server.start_link(#i module, Opts, [])
 end
 
 fn stop @public
-  @doc("Stop a {{name}}'s instance from the reference returned by start_link")
-  case Ref:
-    gen_server.call(Ref, stop)
+@doc("Stop a {{name}}'s instance from the reference returned by start_link")
+case Ref:
+  gen_server.call(Ref, stop)
 end
 
 fn action @public
-  @doc("Do some action")
-  @spec(pid(), any()) -> (ok, integer())
-  case Ref, Data:
-    gen_server.call(Ref, (action, Data))
+@doc("Do some action")
+@spec(pid(), any()) -> (ok, integer())
+case Ref, Data:
+  gen_server.call(Ref, (action, Data))
 end
 
 fn query @public
-  @doc("Get value")
-  @spec(pid()) -> (ok, integer())
-  case Ref:
-    gen_server.call(Ref, (query, count))
+@doc("Get value")
+@spec(pid()) -> (ok, integer())
+case Ref:
+  gen_server.call(Ref, (query, count))
 end
 
 #_ "gen_server callbacks"
 
 fn init @public
-  @doc("gen_server callback to initialize {{name}}'s state")
+@doc("gen_server callback to initialize {{name}}'s state")
 
-  case Opts:
-    lager.info("init", Opts)
-    (ok, #r.state {count: 0})
+case Opts:
+  lager.info("init", Opts)
+  (ok, #r.state {count: 0})
 end
 
 
 fn handle_call @public
-  @doc("gen_server callback to handle {{name}}'s calls")
+@doc("gen_server callback to handle {{name}}'s calls")
 
-  case stop, From, State:
-    lager.info("stopping by ~p, state was ~p.", [From, State])
-    (stop, normal, stopped, State)
+case stop, From, State:
+  lager.info("stopping by ~p, state was ~p.", [From, State])
+  (stop, normal, stopped, State)
 
-  case (action, Data), _From, State = #r.state {count: Count}:
-    NewCount = Count + 1
-    NewState = #r.state State#{count: NewCount, last_data: Data}
-    (reply, (ok, NewCount), NewState)
+case (action, Data), _From, State = #r.state {count: Count}:
+  NewCount = Count + 1
+  NewState = #r.state State#{count: NewCount, last_data: Data}
+  (reply, (ok, NewCount), NewState)
 
-  case (query, count), _From, State = #r.state {count: Count}:
-    (reply, (ok, Count), State)
+case (query, count), _From, State = #r.state {count: Count}:
+  (reply, (ok, Count), State)
 end
 
 
 fn handle_cast @public
-  @doc("gen_server callback to handle {{name}}'s casts")
+@doc("gen_server callback to handle {{name}}'s casts")
 
-  case Msg, State:
-    lager.warning("Unknown cast ~p, ~p.", [Msg, State])
-    (noreply, State)
+case Msg, State:
+  lager.warning("Unknown cast ~p, ~p.", [Msg, State])
+  (noreply, State)
 end
 
 
 fn handle_info @public
-  @doc("gen_server callback to handle {{name}}'s info calls")
-  case Info, State:
-    lager.info("info ~p, ~p.", [Info, State])
-    (noreply, State)
+@doc("gen_server callback to handle {{name}}'s info calls")
+case Info, State:
+  lager.info("info ~p, ~p.", [Info, State])
+  (noreply, State)
 end
 
 
 fn terminate @public
-  @doc("gen_server callback to handle {{name}}'s terminate call")
+@doc("gen_server callback to handle {{name}}'s terminate call")
 
-  case Reason, State:
-    lager.info("terminate ~p, ~p", [Reason, State])
-    ok
+case Reason, State:
+  lager.info("terminate ~p, ~p", [Reason, State])
+  ok
 end
 
 
 fn code_change @public
-  @doc("gen_server callback to handle {{name}}'s code_change call")
-  case OldVsn, State, Extra:
-    lager.info("code_change ~p, ~p, ~p", [OldVsn, State, Extra])
-    (ok, State)
+@doc("gen_server callback to handle {{name}}'s code_change call")
+case OldVsn, State, Extra:
+  lager.info("code_change ~p, ~p, ~p", [OldVsn, State, Extra])
+  (ok, State)
 end
 
 #_ "private functions"
